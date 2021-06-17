@@ -19,8 +19,6 @@ You can test this library by interactive FHIR course in the repository [Aidbox/j
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
-- [fhir-py](#fhir-py)
 - [Getting started](#getting-started)
   - [Async example](#async-example)
   - [Searchset examples](#searchset-examples)
@@ -29,6 +27,7 @@ You can test this library by interactive FHIR course in the repository [Aidbox/j
     - [Date](#date)
     - [Modifiers](#modifiers)
     - [Raw parameters](#raw-parameters)
+  - [Get resource by id](#get-resource-by-id)
   - [Get exactly one resource](#get-exactly-one-resource)
   - [Get first result](#get-first-result)
   - [Get total count](#get-total-count)
@@ -49,15 +48,15 @@ You can test this library by interactive FHIR course in the repository [Aidbox/j
   - [serialize()](#serialize)
 - [Reference](#reference-1)
   - [Main class structure](#main-class-structure)
-  - [Acync client (based on _aiohttp_) – AsyncFHIRClient](#acync-client-based-on-aiohttp-%e2%80%93-asyncfhirclient)
+  - [Acync client (based on _aiohttp_) – AsyncFHIRClient](#acync-client-based-on-_aiohttp_--asyncfhirclient)
     - [AsyncFHIRResource](#asyncfhirresource)
     - [AsyncFHIRReference](#asyncfhirreference)
     - [AsyncFHIRSearchSet](#asyncfhirsearchset)
-  - [Sync client (based on _requests_) – SyncFHIRClient](#sync-client-based-on-requests-%e2%80%93-syncfhirclient)
+  - [Sync client (based on _requests_) – SyncFHIRClient](#sync-client-based-on-_requests_--syncfhirclient)
     - [SyncFHIRResource](#syncfhirresource)
     - [SyncFHIRReference](#syncfhirreference)
     - [SyncFHIRSearchSet](#syncfhirsearchset)
-- [Run tests](#run-tests)
+- [Run integration tests](#run-integration-tests)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -201,6 +200,15 @@ patients.search(Raw(**{'general-practitioner.name': 'Hospital'}))
 # /Patient?general-practitioner.name=Hospital
 ```
 
+## Get resource by id
+Use reference to get resource by id
+```Python
+patient = await client.reference('Patient', '1').to_resource()
+# /Patient/1
+```
+
+Or use FHIR search API with `.first()` or `.get()` as described below.
+
 ## Get exactly one resource
 ```Python
 try:
@@ -214,6 +222,7 @@ practitioners = client.resources('Practitioner')
 
 try:
     await practitioners.search(active=True, _id='id').get()
+    # /Practitioner?active=true&_id=id
 except ResourceNotFound:
     pass
 except MultipleResourcesFound:
@@ -483,7 +492,8 @@ The same as AsyncFHIRReference but with sync methods
 The same as AsyncFHIRSearchSet but with sync methods
 
 
-# Run integration tests (need some test FHIR server, e.g. https://docs.aidbox.app/installation/setup-aidbox.dev)
+# Run integration tests
+(need some test FHIR server to run with, e.g. https://docs.aidbox.app/installation/setup-aidbox.dev)
 1. Clone this repository:
 `https://github.com/beda-software/fhir-py.git`
 
